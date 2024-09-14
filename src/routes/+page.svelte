@@ -312,7 +312,7 @@
             <Marker
                 {lngLat}
                 class="grid h-8 w-14 place-items-center rounded-md border
-                    border-gray-200 bg-red-300 text-black shadow-2xl
+                    border-gray-200 bg-red-500 text-black shadow-2xl
                     focus:outline-2 focus:outline-black"
             >
                 <span>
