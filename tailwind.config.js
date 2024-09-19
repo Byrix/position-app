@@ -10,6 +10,10 @@ export default {
     plugins: [
         daisyui,
         typography,
+        require('@catppuccin/tailwindcss')({
+            prefex: '',
+            defaultFlavour: 'latte',
+        }),
     ],
     daisyui: {
         themes: false, // false: only light + dark | true: all themes | array: specific themes like this ["light", "dark", "cupcake"]
