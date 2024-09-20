@@ -23,11 +23,16 @@
     >
         About
     </a>
+    <a
+        class="btn btn-ghost text-xl"
+        href="{base}/example">
+        Example
+    </a>
 </div>
 
 <!-- Main content -->
 <!-- Content is inserted at <slot /> -->
 <!-- DoNotChange -->
 <main class="max-w-[1920px] container mx-auto pt-4">
-    <slot />
+    <slot reset />
 </main>
