@@ -1,4 +1,5 @@
 import antfu from '@antfu/eslint-config'
+import jsxA11y from 'eslint-plugin-jsx-a11y'
 
 export default antfu(
     {
@@ -68,6 +69,13 @@ export default antfu(
                     singleline: 'beside',
                 },
             ],
+        },
+    },
+    {
+        files: ['**/*.{js,mjs,cjs,jsx,mjsx,ts,tsx,mtsx,svelte}'],
+        ...jsxA11y.flatConfigs.recommended,
+        languageOptions: {
+            ...jsxA11y.flatConfigs.recommended.languageOptions,
         },
     },
 )

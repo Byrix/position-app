@@ -1,6 +1,6 @@
 <script>
-    import '../app.css' // DoNotChange
     import { base } from '$app/paths' // DoNotChange
+    import '../app.css' // DoNotChange
 </script>
 
 <!-- Website title -->
