@@ -8,6 +8,7 @@
         ControlGroup,
         FillLayer,
         GeoJSON,
+        GeolocateControl,
         hoverStateFilter,
         LineLayer,
         MapEvents,
@@ -30,7 +31,7 @@
      * Note the format of markers
      */
 
-    let markers = [
+    const markers = [
         {
             lngLat: {
                 lng: 144.98,
@@ -66,68 +67,9 @@
         timeout: Infinity, // milliseconds
         maximumAge: 0, // milliseconds, 0 disables cached positions
     }
-    let getPosition = false
-    let success = false
-    let error = ''
-    let position = {}
-    let coords = []
 
-    let watchPosition = false
-    let watchedPosition = {}
-
-    /**
-     * $: indicates a reactive statement, meaning that this block of code is
-     * executed whenever the variable used as the condition changes its value
-     *
-     * In this case: whenever success is set to true, a Position object
-     * has been successfully obtained. Immediately update the relevant variables
-     */
-    $: {
-        if (success || error) {
-            // reset the flag
-            getPosition = false
-        }
-    }
-
-    $: {
-        if (success) {
-            coords = [position.coords.longitude, position.coords.latitude]
-            markers = [
-                ...markers,
-                {
-                    lngLat: { lng: coords[0], lat: coords[1] },
-                    label: 'Current',
-                    name: 'This is the current position',
-                }
-            ]
-        }
-    }
-
-    /**
-     * Declaring a function
-     *
-     * Functions declared in <script> can only be used in this component
-     */
-
-    function addMarker(e, label, name) {
-        markers = [
-            ...markers,
-            {
-                lngLat: e.detail.lngLat,
-                label,
-                name,
-            }
-        ]
-    }
-
-    /**
-     * Variables can be initialised without a value and populated later
-     * WARNING: this can lead to errors if the variable is used before being
-     * assigned a value
-     */
-
-    let showGeoJSON = false
-    let geojsonData
+    const watchPosition = true
+    let watchedPosition, community, research
 
     /**
      * onMount is executed immediately after the component is mounted, it can be
@@ -144,100 +86,25 @@
      * 'https://raw.githubusercontent.com/codeforgermany/click_that_hood/main/public/data/melbourne.geojson'
      */
     onMount(async () => {
-        const response = await fetch('melbourne.geojson')
-        geojsonData = await response.json()
+        const resp_comm = await fetch('community_geocoded.geojson')
+        community = await resp_comm.json()
+        const resp_research = await fetch('research_geocoded.geojson')
+        research = await resp_research.json()
     })
 </script>
 
 <!-- Everything after <script> will be HTML for rendering -->
 
 <!-- This section demonstrates how to get the current user location -->
-<div class="flex flex-col h-[calc(100vh-80px)] w-full">
-    <!-- grid, grid-cols-#, col-span-#, md:xxxx are some Tailwind utilities you can use for responsive design -->
-    <div class="grid grid-cols-3">
-        <div class="col-span-3 md:col-span-1 text-center">
-            <h1 class="font-bold">Click button to get a one-time current position and add it to the map</h1>
-
-            <!-- on:click declares what to do when the button is clicked -->
-            <!-- In the HTML part, {} tells the framework to treat what's inside as code (variables or functions), instead of as strings -->
-            <!-- () => {} is an arrow function, almost equivalent to function foo() {} -->
-            <button
-                class="btn btn-neutral"
-                on:click={() => { getPosition = true }}
-            >
-                Get geolocation
-            </button>
-
-            <!-- <Geolocation> tag is used to access the Geolocation API -->
-            <!-- {getPosition} is equivalent to getPosition={getPosition} -->
-            <!-- bind:variable associates the parameter with the variable with the same name declared in <script> reactively -->
-            <!-- let:variable creates a variable for use from the component's return -->
-            <Geolocation
-                {getPosition}
-                options={options}
-                bind:position
-                let:loading
-                bind:success
-                bind:error
-                let:notSupported
-            >
-                <!-- If-else block syntax -->
-                {#if notSupported}
-                    Your browser does not support the Geolocation API.
-                {:else}
-                    {#if loading}
-                        Loading...
-                    {/if}
-                    {#if success}
-                        Success!
-                    {/if}
-                    {#if error}
-                        An error occurred. Error code {error.code}: {error.message}.
-                    {/if}
-                {/if}
-            </Geolocation>
-
-            <p class="break-words text-left">Coordinates: {coords}</p>
-            <!-- Objects cannot be directly rendered, use JSON.stringify() to convert it to a string -->
-            <p class="break-words text-left">Position: {JSON.stringify(position)}</p>
-
-            <div class="text-center font-medium text-red-500">Note that in some browsers, you cannot repeatedly request the current location. If you need to continuously update the location, use the watch option below.</div>
-        </div>
-
-        <!-- This section demonstrates how to get automatically updated user location -->
-        <div class="col-span-3 md:col-span-1 text-center">
-            <h1 class="font-bold">Automatically updated position when moving</h1>
-
-            <button
-                class="btn btn-neutral"
-                on:click={() => { watchPosition = true }}
-            >
-                Start watching
-            </button>
-
-            <Geolocation
-                getPosition={watchPosition}
-                options={options}
-                watch={true}
-                on:position={(e) => {
-                    watchedPosition = e.detail
-                }}
-            />
-
-            <p class="break-words text-left">watchedPosition: {JSON.stringify(watchedPosition)}</p>
-        </div>
-
-        <div class="col-span-3 md:col-span-1 text-center">
-            <h1 class="font-bold">Toggle Melbourne Suburbs</h1>
-
-            <button
-                class="btn btn-neutral"
-                on:click={() => { showGeoJSON = !showGeoJSON }}
-            >
-                Toggle
-            </button>
-        </div>
-    </div>
+<div class="flex flex-col h-[100%] w-full">
+    <Geolocation
+        getPosition={watchPosition}
+        options={options}
+        watch={true}
+        on:position={(e) => {
+            watchedPosition = e.detail
+        }}
+    />
 
     <!-- This section demonstrates how to make a web map using MapLibre -->
     <!-- More basemap options -->
@@ -245,16 +112,18 @@
     <!-- "https://tiles.basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json" -->
     <!-- "https://tiles.basemaps.cartocdn.com/gl/voyager-gl-style/style.json" -->
     <MapLibre
-        center={[144.97, -37.81]}
         class="map flex-grow min-h-[500px]"
         standardControls
-        style="https://tiles.basemaps.cartocdn.com/gl/voyager-gl-style/style.json"
+        style="https://basemaps.cartocdn.com/gl/positron-gl-style/style.json"
         bind:bounds
+        bind:center={watchedPosition}
         zoom={14}
+        scrollZoom={false}
+        dragPan={false}
     >
         <!-- Custom control buttons -->
         <Control class="flex flex-col gap-y-2">
-            <ControlGroup>
+            <!-- <ControlGroup>
                 <ControlButton
                     on:click={() => {
                         bounds = getMapBounds(markers)
@@ -262,47 +131,46 @@
                 >
                     Fit
                 </ControlButton>
+            </ControlGroup> -->
+            <ControlGroup>
+                <GeolocateControl
+                    trackUserLocation={true}
+                    positionOptions={options}>
+                </GeolocateControl>
             </ControlGroup>
         </Control>
 
-        <!-- A map event to add a marker when clicked -->
-        <MapEvents on:click={event => addMarker(event, 'Added', 'This is an added marker')} />
-
-        <!-- This is how GeoJSON datasets are rendered -->
-        <!-- promoteId must be a unique ID field in properties of each feature -->
-        {#if showGeoJSON}
-            <GeoJSON
-                id="geojsonData"
-                data={geojsonData}
-                promoteId="name"
+        <GeoJSON
+            id="geojsonData"
+            data={research}
+            promoteId="Address"
+        >
+            <FillLayer
+                paint={{
+                    'fill-color': hoverStateFilter('purple', 'yellow'),
+                    'fill-opacity': 0.3,
+                }}
+                beforeLayerType="symbol"
+                manageHoverState
             >
-                <FillLayer
-                    paint={{
-                        'fill-color': hoverStateFilter('purple', 'yellow'),
-                        'fill-opacity': 0.3,
-                    }}
-                    beforeLayerType="symbol"
-                    manageHoverState
+                <Popup
+                    openOn="hover"
+                    let:data
                 >
-                    <Popup
-                        openOn="hover"
-                        let:data
-                    >
-                        {@const props = data?.properties}
-                        {#if props}
-                            <div class="flex flex-col gap-2">
-                                <p>{props.name}</p>
-                            </div>
-                        {/if}
-                    </Popup>
-                </FillLayer>
-                <LineLayer
-                    layout={{ 'line-cap': 'round', 'line-join': 'round' }}
-                    paint={{ 'line-color': 'purple', 'line-width': 3 }}
-                    beforeLayerType="symbol"
-                />
-            </GeoJSON>
-        {/if}
+                    {@const props = data?.properties}
+                    {#if props}
+                        <div class="flex flex-col gap-2">
+                            <p>{props.name}</p>
+                        </div>
+                    {/if}
+                </Popup>
+            </FillLayer>
+            <LineLayer
+                layout={{ 'line-cap': 'round', 'line-join': 'round' }}
+                paint={{ 'line-color': 'purple', 'line-width': 3 }}
+                beforeLayerType="symbol"
+            />
+        </GeoJSON>
 
         <!-- Displaying markers, this is reactive -->
         <!-- For-each loop syntax -->
