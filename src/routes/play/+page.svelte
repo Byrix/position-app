@@ -10,7 +10,7 @@
         Layer,
         MapLibre
     } from 'svelte-maplibre'
-    import Error from '../+error.svelte'
+    // import Error from '../+error.svelte'
 
     const markers = [
         {
