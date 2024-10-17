@@ -1,8 +1,8 @@
 <script>
     import { getMapBounds } from '$lib'
-    import { onMount } from 'svelte' // DoNotChange
+    import { error } from '@sveltejs/kit'
+    import { onMount } from 'svelte'
     import Geolocation from 'svelte-geolocation'
-
     import {
         Control,
         ControlGroup,
@@ -10,37 +10,6 @@
         Layer,
         MapLibre
     } from 'svelte-maplibre'
-    // import Error from '../+error.svelte'
-
-    const markers = [
-        {
-            lngLat: {
-                lng: 144.98,
-                lat: -37.805,
-            },
-            label: 'Marker 1',
-            name: 'This is a marker'
-        },
-        {
-            lngLat: {
-                lng: 144.98,
-                lat: -37.81,
-            },
-            label: 'Marker 2',
-            name: 'This is a marker'
-        },
-        {
-            lngLat: {
-                lng: 144.96,
-                lat: -37.81,
-            },
-            label: 'Marker 3',
-            name: 'This is a marker'
-        }
-    ]
-
-    // Extent of the map
-    let bounds = getMapBounds(markers)
 
     // Geolocation API related
     const options = {
@@ -50,19 +19,21 @@
     }
 
     const watchPosition = true
-    let watchedPosition, researchSource
+    let watchedPosition, dataSource, bounds
 
     onMount(async () => {
-        const response = await fetch('research.geojson')
-        await response.json().then((data) => {
-            loaded = true
-            console.log(data)
-            researchSource = { type: 'geojson', data }
+        fetch('data.geojson').then((resp) => {
+            return resp.json()
+        }).then((data) => {
+            dataSource = { type: 'geojson', data }
+            bounds = getMapBounds(data.features)
+        }).catch((err) => {
+            console.error(err)
+            throw error(500, err)
         })
     })
 </script>
 
-<!-- This section demonstrates how to get the current user location -->
 <div class="flex flex-col h-[100%] w-full">
     <Geolocation
         getPosition={watchPosition}
@@ -97,7 +68,7 @@
         <Layer
             id="research"
             type="circle"
-            source={researchSource}
+            source={dataSource}
             paint={{
                 'circle-radius': 5,
                 'circle-color': 'red'
@@ -105,5 +76,3 @@
         />
     </MapLibre>
 </div>
-
-<!-- Optionally, you can have a <style> tag for CSS at the end, but with TailwindCSS it is usually not necessary -->
