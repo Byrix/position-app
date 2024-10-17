@@ -26,3 +26,34 @@ export function getMapCentre(features) {
     const lngMax = Math.max(...lngs)
     return { lng: (lngMin + lngMax) / 2, lat: (latMin + latMax) / 2 }
 }
+
+/**
+ * Gets the value of a cookie
+ * @param name the name of the cookie to get the value of
+ * @returns the value of cookie
+ */
+export function getCookie(name) {
+    const nameEQ = `${name}=`
+    const cookies = document.cookie.split(';')
+    for (let i = 0; i < cookies.length; i++) {
+        let c = cookies[i]
+        while (c.charAt(0) === ' ') { c = c.substring(1, c.length) }
+        if (c.indexOf(nameEQ) === 0) { return c.substring(nameEQ.length, c.length) }
+    }
+    return null
+}
+/**
+ * Sets the value of a cookie
+ * @param name the name of the cookie to update
+ * @param value the new value
+ * @param expiry the number of days until it expires
+ */
+export function setCookie(name, value, expiry) {
+    let expires = ''
+    if (expiry) {
+        const date = new Date()
+        date.setTime(date.getTime() + (expiry * 24 * 60 * 60 * 1000))
+        expires = `; expires=${date.toUTCString()}`
+    }
+    document.cookie = `${name}=${value || ''}${expires}; path=/`
+}
