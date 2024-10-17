@@ -1,5 +1,5 @@
 <script>
-    import { getMapBounds } from '$lib'
+    import { getCookie, getMapBounds } from '$lib'
     import { error } from '@sveltejs/kit'
     import { onMount } from 'svelte'
     import Geolocation from 'svelte-geolocation'
@@ -8,7 +8,8 @@
         ControlGroup,
         GeolocateControl,
         Layer,
-        MapLibre
+        MapLibre,
+        Popup
     } from 'svelte-maplibre'
 
     // Geolocation API related
@@ -19,8 +20,15 @@
     }
 
     const watchPosition = true
-    let watchedPosition, dataSource, bounds
+    let watchedPosition
 
+    // NSFW filtering
+    let nsfw, nsfwFilter
+    nsfw = getCookie('nsfw')
+    if (!nsfw) { nsfwFilter = ['!=', ['get', 'Classification'], 'Beat'] }
+
+    // Data loading
+    let dataSource, bounds
     onMount(async () => {
         fetch('data.geojson').then((resp) => {
             return resp.json()
@@ -73,6 +81,20 @@
                 'circle-radius': 5,
                 'circle-color': 'red'
             }}
-        />
+            filter={nsfwFilter}
+        >
+            <Popup
+                openOn="hover"
+                let:data
+            >
+                {@const props = data?.properties}
+                {#if props}
+                    <div class="flex flex-col gap-2">
+                        <p>{props.Name}</p>
+                        <p>{props.Classification}</p>
+                    </div>
+                {/if}
+            </Popup>
+        </Layer>
     </MapLibre>
 </div>
