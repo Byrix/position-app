@@ -15,27 +15,27 @@
         "lint:fix": "eslint . --fix"
     },
     "devDependencies": {
-        "@antfu/eslint-config": "^3.7.1",
+        "@antfu/eslint-config": "^3.7.3",
         "@catppuccin/tailwindcss": "^0.1.6",
         "@sveltejs/adapter-auto": "^3.2.5",
         "@sveltejs/adapter-static": "^3.0.5",
-        "@sveltejs/kit": "^2.5.28",
+        "@sveltejs/kit": "^2.7.1",
         "@sveltejs/vite-plugin-svelte": "^3.1.2",
         "@tailwindcss/typography": "^0.5.15",
         "autoprefixer": "^10.4.20",
-        "daisyui": "^4.12.10",
-        "eslint": "^9.11.1",
+        "daisyui": "^4.12.13",
+        "eslint": "^9.12.0",
         "eslint-plugin-jsx-a11y": "^6.10.0",
-        "eslint-plugin-svelte": "^2.44.0",
-        "gh-pages": "^6.1.1",
+        "eslint-plugin-svelte": "^2.44.1",
+        "gh-pages": "^6.2.0",
         "postcss": "^8.4.47",
         "svelte": "^4.2.19",
-        "svelte-check": "^4.0.2",
+        "svelte-check": "^4.0.5",
         "svelte-eslint-parser": "^0.41.1",
         "svelte-geolocation": "^1.0.0",
-        "svelte-maplibre": "^0.9.13",
-        "tailwindcss": "^3.4.13",
-        "typescript": "^5.6.2",
-        "vite": "^5.4.8"
+        "svelte-maplibre": "^0.9.14",
+        "tailwindcss": "^3.4.14",
+        "typescript": "^5.6.3",
+        "vite": "^5.4.9"
     }
 }
