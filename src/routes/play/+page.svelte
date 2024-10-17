@@ -25,6 +25,7 @@
     // NSFW filtering
     let nsfw, nsfwFilter
     nsfw = getCookie('nsfw')
+    nsfw = true // TODO debug only to remove
     if (!nsfw) { nsfwFilter = ['!=', ['get', 'Classification'], 'Beat'] }
 
     // Data loading
@@ -42,7 +43,7 @@
     })
 </script>
 
-<div class="flex flex-col h-[100%] w-full">
+<div class="flex flex-col h-[100%] w-full cursor-default">
     <Geolocation
         getPosition={watchPosition}
         options={options}
@@ -53,7 +54,7 @@
     />
 
     <MapLibre
-        class="map flex-grow min-h-[500px]"
+        class="map flex-grow min-h-[500px] cursor-default"
         standardControls
         style="https://basemaps.cartocdn.com/gl/positron-gl-style/style.json"
         bind:bounds

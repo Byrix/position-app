@@ -57,3 +57,14 @@ export function setCookie(name, value, expiry) {
     }
     document.cookie = `${name}=${value || ''}${expires}; path=/`
 }
+
+/**
+ * Converts text to title case
+ * @param str the text to convert
+ * @returns txt in title case form
+ */
+export function toTitleCase(str) {
+    return str.replace(/\w\S*/g, (txt) => {
+        return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase()
+    })
+}
