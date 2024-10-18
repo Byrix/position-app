@@ -1,7 +1,7 @@
 <svg
     xmlns="http://www.w3.org/2000/svg"
-    width="25"
-    height="25"
+    width="18"
+    height="18"
     viewBox="0 0 101 101">
     <defs>
         <style>
@@ -9,19 +9,12 @@
           fill: #000; /* Black for the icon */
         }
         .cls-2 {
-          fill: #fff; /* Blue fill for the circle */
+          fill: #4ed40b; /* Blue fill for the circle */
           stroke: #fff; /* White border */
           stroke-width: 2; /* Optional border thickness */
         }
       </style>
     </defs>
-
-    <!-- Background circle with blue fill -->
-    <circle
-        cx="50"
-        cy="50"
-        r="50"
-        class="cls-2" />
 
     <g data-name="Layer_1">
         <circle
