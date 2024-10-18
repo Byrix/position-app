@@ -29,7 +29,7 @@
     if (!nsfw) { nsfwFilter = ['!=', ['get', 'Classification'], 'Beat'] }
 
     // Data loading
-    let dataSource, bounds
+    let dataSource, bounds, dark
     onMount(async () => {
         fetch('data.geojson').then((resp) => {
             return resp.json()
@@ -40,7 +40,18 @@
             console.error(err)
             throw error(500, err)
         })
+
+        dark = await (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)
     })
+
+    // Sidebar
+    let feature
+    let showSidebar = false
+    function handleSymbolClick(event) {
+        if (!showSidebar) { showSidebar = true }
+        feature = event.detail.features[0]
+        console.log(feature)
+    }
 </script>
 
 <div class="flex flex-col h-[100%] w-full cursor-default">
@@ -53,14 +64,14 @@
         }}
     />
 
+    <!-- https://basemaps.cartocdn.com/gl/positron-gl-style/style.json -->
     <MapLibre
         class="map flex-grow min-h-[500px] cursor-default"
         standardControls
-        style="https://basemaps.cartocdn.com/gl/positron-gl-style/style.json"
+        style={dark ? 'https://tiles.basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json' : 'https://basemaps.cartocdn.com/gl/positron-gl-style/style.json'}
         bind:bounds
         bind:center={watchedPosition}
         zoom={14}
-        scrollZoom={false}
         dragPan={false}
     >
         <!-- Custom control buttons -->
@@ -83,6 +94,7 @@
                 'circle-color': 'red'
             }}
             filter={nsfwFilter}
+            on:click={handleSymbolClick}
         >
             <Popup
                 openOn="hover"
@@ -98,4 +110,13 @@
             </Popup>
         </Layer>
     </MapLibre>
+
+    {#if showSidebar && feature}
+        <div>
+            <div>Header</div>
+            <div>Body</div>
+            <div>Activity</div>
+            <div>Footer</div>
+        </div>
+    {/if}
 </div>
