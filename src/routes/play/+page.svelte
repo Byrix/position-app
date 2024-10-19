@@ -1,5 +1,6 @@
 <script>
     import { getCookie, getMapBounds } from '$lib'
+    import Close from '$lib/assets/Close.svelte'
     import { error } from '@sveltejs/kit'
     import { onMount } from 'svelte'
     import Geolocation from 'svelte-geolocation'
@@ -22,6 +23,10 @@
     const watchPosition = true
     let watchedPosition
 
+    // Misc
+    let truncate
+    const txtMaxLen = 150
+
     // NSFW filtering
     let nsfw, nsfwFilter
     nsfw = getCookie('nsfw')
@@ -41,18 +46,40 @@
             throw error(500, err)
         })
     })
+
+    // Sidebar
+    let feature
+    let showSidebar = false
+    function handleSymbolClick(event) {
+        if (!showSidebar) { showSidebar = true }
+        truncate = true
+        feature = event.detail.features[0]
+        console.log(feature)
+        console.log(showSidebar)
+    }
+
+    // Map symbology
+    let map
+    function loadMapSymbols() {
+        const images = ['sauna', 'landmark', 'nightlife', 'beat', 'shopfront', 'church', 'crime', 'community', 'hospital', 'gym', 'identity', 'relationship', 'default']
+    // images.forEach(async (image) => {
+        //     const img = await map.loadImage(`/${image}.png`)
+        //     map.addImage(image, img.data)
+        // })
+    }
 </script>
 
-<div class="flex flex-col h-[100%] w-full cursor-default">
-    <Geolocation
+<div class="flex flex-row h-[100%] w-full cursor-default">
+    <!-- <Geolocation
         getPosition={watchPosition}
         options={options}
         watch={true}
         on:position={(e) => {
             watchedPosition = e.detail
         }}
-    />
+    /> -->
 
+    <!-- https://basemaps.cartocdn.com/gl/positron-gl-style/style.json -->
     <MapLibre
         class="map flex-grow min-h-[500px] cursor-default"
         standardControls
@@ -60,8 +87,8 @@
         bind:bounds
         bind:center={watchedPosition}
         zoom={14}
-        scrollZoom={false}
-        dragPan={false}
+        bind:map={map}
+        on:load={loadMapSymbols}
     >
         <!-- Custom control buttons -->
         <Control class="flex flex-col gap-y-2">
@@ -74,6 +101,20 @@
         </Control>
 
         <!-- Data layer -->
+        <!-- <Layer
+            id="research"
+            type="symbol"
+            source={dataSource}
+            layout={{
+                'icon-image': ['match', ['get', 'Classification'], 'Sauna', 'sauna', 'Place of Queer Significance', 'landmark', 'Nightlife', 'nightlife', 'Beat', 'beat', 'Shopfront', 'shopfront', 'Church', 'church', 'Crime', 'crime', 'Community Group', 'community', 'Hospital', 'hospital', 'Gym', 'gym', // NOTHING
+                    'Identity', 'identity', // NOTHING
+                    'Relationships', 'relationship', // NOTHING
+                    'Community', 'community', 'default'], // NOTHING
+                'icon-size': 1
+            }}
+            filter={nsfwFilter}
+            on:click={handleSymbolClick}
+        > -->
         <Layer
             id="research"
             type="circle"
@@ -83,6 +124,7 @@
                 'circle-color': 'red'
             }}
             filter={nsfwFilter}
+            on:click={handleSymbolClick}
         >
             <Popup
                 openOn="hover"
@@ -98,4 +140,41 @@
             </Popup>
         </Layer>
     </MapLibre>
+
+    {#if showSidebar && feature}
+        <div class="h-full min-w-[20%] max-w-[20%] text-text bg-base flex flex-col overflow-auto overflow-y-auto p-2">
+            <div class="w-full flex flex-row">
+                <button on:click={() => showSidebar = false}>
+                    <Close />
+                </button>
+            </div>
+            <div>
+                <h5 class="text-lg"><b>{feature.properties.Name}</b></h5>
+                <span class="text-xs py-2">{feature.properties.Classification}</span><br>
+                <span class="text-xs italic">{feature.properties.Address}</span>
+                <p class="py-2">
+                    {#if feature.properties.Story.length > txtMaxLen}
+                        {#if truncate}
+                            {feature.properties.Story.slice(0, txtMaxLen)}
+                            <button
+                                on:click={() => { truncate = false }}
+                                class="text-sky">Read more...</button>
+                        {:else}
+                            {feature.properties.Story}
+                            <button
+                                on:click={() => { truncate = true }}
+                                class="text-sky">Read less...</button>
+                        {/if}
+                    {:else}
+                        {feature.properties.Story}
+                    {/if}
+                </p>
+            </div>
+            <!-- <div class="flex-grow"></div> -->
+            <div>Activity</div>
+            <div class="text-xs text-subtext1">
+                Source: {feature.properties.Source}
+            </div>
+        </div>
+    {/if}
 </div>
