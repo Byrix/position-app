@@ -8,8 +8,7 @@
         ControlGroup,
         GeolocateControl,
         Layer,
-        MapLibre,
-        Popup
+        MapLibre
     } from 'svelte-maplibre'
 
     // Geolocation API related
@@ -52,6 +51,16 @@
         feature = event.detail.features[0]
         console.log(feature)
     }
+
+    // Map symbology
+    let map
+    function loadMapSymbols() {
+        const images = ['sauna', 'landmark', 'nightlife', 'beat', 'shopfront', 'church', 'crime', 'community', 'hospital', 'gym', 'identity', 'relationship', 'default']
+        images.forEach(async (image) => {
+            const img = await map.loadImage(`/${image}.png`)
+            map.addImage(image, img.data)
+        })
+    }
 </script>
 
 <div class="flex flex-col h-[100%] w-full cursor-default">
@@ -73,6 +82,8 @@
         bind:center={watchedPosition}
         zoom={14}
         dragPan={false}
+        bind:map={map}
+        on:load={loadMapSymbols}
     >
         <!-- Custom control buttons -->
         <Control class="flex flex-col gap-y-2">
@@ -87,16 +98,19 @@
         <!-- Data layer -->
         <Layer
             id="research"
-            type="circle"
+            type="symbol"
             source={dataSource}
-            paint={{
-                'circle-radius': 5,
-                'circle-color': 'red'
+            layout={{
+                'icon-image': ['match', ['get', 'Classification'], 'Sauna', 'sauna', 'Place of Queer Significance', 'landmark', 'Nightlife', 'nightlife', 'Beat', 'beat', 'Shopfront', 'shopfront', 'Church', 'church', 'Crime', 'crime', 'Community Group', 'community', 'Hospital', 'hospital', 'Gym', 'gym', // NOTHING
+                    'Identity', 'identity', // NOTHING
+                    'Relationships', 'relationship', // NOTHING
+                    'Community', 'community', 'default'], // NOTHING
+                'icon-size': 1
             }}
             filter={nsfwFilter}
             on:click={handleSymbolClick}
         >
-            <Popup
+            <!-- <Popup
                 openOn="hover"
                 let:data
             >
@@ -107,7 +121,7 @@
                         <p>{props.Classification}</p>
                     </div>
                 {/if}
-            </Popup>
+            </Popup> -->
         </Layer>
     </MapLibre>
 
