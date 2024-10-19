@@ -1,5 +1,6 @@
 <script>
     import { getCookie, getMapBounds } from '$lib'
+    import Close from '$lib/assets/Close.svelte'
     import { error } from '@sveltejs/kit'
     import { onMount } from 'svelte'
     import Geolocation from 'svelte-geolocation'
@@ -8,7 +9,8 @@
         ControlGroup,
         GeolocateControl,
         Layer,
-        MapLibre
+        MapLibre,
+        Popup
     } from 'svelte-maplibre'
 
     // Geolocation API related
@@ -21,6 +23,10 @@
     const watchPosition = true
     let watchedPosition
 
+    // Misc
+    let truncate
+    const txtMaxLen = 150
+
     // NSFW filtering
     let nsfw, nsfwFilter
     nsfw = getCookie('nsfw')
@@ -28,7 +34,7 @@
     if (!nsfw) { nsfwFilter = ['!=', ['get', 'Classification'], 'Beat'] }
 
     // Data loading
-    let dataSource, bounds, dark
+    let dataSource, bounds
     onMount(async () => {
         fetch('data.geojson').then((resp) => {
             return resp.json()
@@ -39,8 +45,6 @@
             console.error(err)
             throw error(500, err)
         })
-
-        dark = await (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)
     })
 
     // Sidebar
@@ -48,40 +52,41 @@
     let showSidebar = false
     function handleSymbolClick(event) {
         if (!showSidebar) { showSidebar = true }
+        truncate = true
         feature = event.detail.features[0]
         console.log(feature)
+        console.log(showSidebar)
     }
 
     // Map symbology
     let map
     function loadMapSymbols() {
         const images = ['sauna', 'landmark', 'nightlife', 'beat', 'shopfront', 'church', 'crime', 'community', 'hospital', 'gym', 'identity', 'relationship', 'default']
-        images.forEach(async (image) => {
-            const img = await map.loadImage(`/${image}.png`)
-            map.addImage(image, img.data)
-        })
+    // images.forEach(async (image) => {
+        //     const img = await map.loadImage(`/${image}.png`)
+        //     map.addImage(image, img.data)
+        // })
     }
 </script>
 
-<div class="flex flex-col h-[100%] w-full cursor-default">
-    <Geolocation
+<div class="flex flex-row h-[100%] w-full cursor-default">
+    <!-- <Geolocation
         getPosition={watchPosition}
         options={options}
         watch={true}
         on:position={(e) => {
             watchedPosition = e.detail
         }}
-    />
+    /> -->
 
     <!-- https://basemaps.cartocdn.com/gl/positron-gl-style/style.json -->
     <MapLibre
         class="map flex-grow min-h-[500px] cursor-default"
         standardControls
-        style={dark ? 'https://tiles.basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json' : 'https://basemaps.cartocdn.com/gl/positron-gl-style/style.json'}
+        style="https://basemaps.cartocdn.com/gl/positron-gl-style/style.json"
         bind:bounds
         bind:center={watchedPosition}
         zoom={14}
-        dragPan={false}
         bind:map={map}
         on:load={loadMapSymbols}
     >
@@ -96,7 +101,7 @@
         </Control>
 
         <!-- Data layer -->
-        <Layer
+        <!-- <Layer
             id="research"
             type="symbol"
             source={dataSource}
@@ -109,8 +114,19 @@
             }}
             filter={nsfwFilter}
             on:click={handleSymbolClick}
+        > -->
+        <Layer
+            id="research"
+            type="circle"
+            source={dataSource}
+            paint={{
+                'circle-radius': 5,
+                'circle-color': 'red'
+            }}
+            filter={nsfwFilter}
+            on:click={handleSymbolClick}
         >
-            <!-- <Popup
+            <Popup
                 openOn="hover"
                 let:data
             >
@@ -121,16 +137,44 @@
                         <p>{props.Classification}</p>
                     </div>
                 {/if}
-            </Popup> -->
+            </Popup>
         </Layer>
     </MapLibre>
 
     {#if showSidebar && feature}
-        <div>
-            <div>Header</div>
-            <div>Body</div>
+        <div class="h-full min-w-[20%] max-w-[20%] text-text bg-base flex flex-col overflow-auto overflow-y-auto p-2">
+            <div class="w-full flex flex-row">
+                <button on:click={() => showSidebar = false}>
+                    <Close />
+                </button>
+            </div>
+            <div>
+                <h5 class="text-lg"><b>{feature.properties.Name}</b></h5>
+                <span class="text-xs py-2">{feature.properties.Classification}</span><br>
+                <span class="text-xs italic">{feature.properties.Address}</span>
+                <p class="py-2">
+                    {#if feature.properties.Story.length > txtMaxLen}
+                        {#if truncate}
+                            {feature.properties.Story.slice(0, txtMaxLen)}
+                            <button
+                                on:click={() => { truncate = false }}
+                                class="text-sky">Read more...</button>
+                        {:else}
+                            {feature.properties.Story}
+                            <button
+                                on:click={() => { truncate = true }}
+                                class="text-sky">Read less...</button>
+                        {/if}
+                    {:else}
+                        {feature.properties.Story}
+                    {/if}
+                </p>
+            </div>
+            <!-- <div class="flex-grow"></div> -->
             <div>Activity</div>
-            <div>Footer</div>
+            <div class="text-xs text-subtext1">
+                Source: {feature.properties.Source}
+            </div>
         </div>
     {/if}
 </div>
