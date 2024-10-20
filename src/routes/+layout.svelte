@@ -1,3 +1,51 @@
+<style>
+    .navbar {
+        background-color: var(--surface0);
+        display: flex;
+        flex-direction: row;
+        padding: 1rem;
+    }
+
+    .btn {
+        background: none;
+        border: none;
+        color: var(--text);
+        cursor: pointer;
+        font-size: 1.25rem;
+        padding: 0.5rem 1rem;
+        text-align: center;
+        text-decoration: none;
+        transition: background-color 0.3s ease;
+    }
+
+    .btn:hover {
+        background-color: var(--surface1);
+    }
+
+    .container {
+        margin: 0 auto;
+        max-width: 1920px;
+        padding: 1rem;
+    }
+
+    main {
+        height: 100vh;
+        overflow: auto;
+    }
+
+    .nsfw-prompt {
+        background-color: var(--peach);
+        max-width: 50%;
+        max-height: 50%;
+        padding: 1rem;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 1;
+    }
+</style>
+
 <script>
     import { base } from '$app/paths' // DoNotChange
     import { getCookie, toTitleCase } from '$lib'

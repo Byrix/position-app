@@ -7,21 +7,21 @@
 
 <div class="w-full text-center">
     <p>
-        New to Melbourne and feeling a bit lonely? Looking for community?
+        New to Melbourne? Looking for community?
         Or just interested in learning more about our city's queer history?
         PridePoints is the game for you! A GNSS game designed to help you explore
-        Melbourne through a new lens while interacting with others in the LGBTQIA+ community.<br><br>
+        Melbourne through a new lens while interacting with others in the LGBTIQA+ community.<br><br>
 
         <strong><em>How to play</em></strong><br>
         Click on the locator button and start walking towards the icons on the map. Each icon is an important place
         of queer history in Melbourne. When you arrive at the locations, a pop-up will tell you more. <br><br>
-        But what's that? Didn't we call this a game? Click 'Play' under the information and start a game with other PridePoints
+        But what's that? Didn't we call this a game?<br><br> Click 'Play' under the information and start a game with other PridePoints
         players who have visited the same locations. Every time you complete a game, you will earn points and make your own
         mark on the map. Slowly build up your own queer history through interactions with others in the community. <br><br>
         <strong><em>Queer Quests</em></strong><br>
         Don't feel like playing with others? That's okay! You can still earn points by visiting locations and
         completing Queer Quests. These include GNSS enabled walking tours, collaborative story telling, contributing
-        to digital community artworks and more. Build up a repuation for yourself on the leaderboard or play anonymously.
+        to digital community artworks and more. Build up a reputation for yourself on the leaderboard or play anonymously.
         It's your choice! We are just here to support you on your journey, whatever that looks like for you. <br><br>
 
         <strong><em>Content warning</em></strong><br>
