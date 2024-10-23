@@ -3,7 +3,7 @@
         background-color: var(--surface0);
         display: flex;
         flex-direction: row;
-        padding: 1rem;
+        padding: 0.2rem;
     }
 
     .btn {
@@ -25,7 +25,7 @@
     .container {
         margin: 0 auto;
         max-width: 1920px;
-        padding: 1rem;
+        padding: 0rem;
     }
 
     main {
