@@ -34,7 +34,7 @@
     // NSFW filtering
     let nsfw, nsfwFilter
     nsfw = getContext('nsfw')
-    if (!nsfw) { nsfwFilter = ['!=', ['get', 'Classification'], 'Beat'] }
+    if (!nsfw) { nsfwFilter = ['all', ['!=', ['get', 'Classification'], 'Beat'], ['!=', ['get', 'Classification'], 'Sauna']] }
 
     // Data loading
     let dataSource, bounds
