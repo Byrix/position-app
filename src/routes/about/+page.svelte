@@ -10,7 +10,7 @@
         New to Melbourne? Looking for community?
         Or just interested in learning more about our city's queer history?
         PridePoints is the game for you! A GNSS game designed to help you explore
-        Melbourne through a new lens while interacting with others in the LGBTIQA+ community.<br><br>
+        Melbourne through a new lens while interacting with others in the LGBTQIA+ community.<br><br>
 
         <strong><em>How to play</em></strong><br>
         Click on the locator button and start walking towards the icons on the map. Each icon is an important place

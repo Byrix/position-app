@@ -1,6 +1,8 @@
 <script>
     import { getCookie, getMapBounds } from '$lib'
+    import ActivityOptions from '$lib/assets/ActivityOptions.svelte'
     import Close from '$lib/assets/Close.svelte'
+    import Report from '$lib/assets/Report.svelte'
     import { error } from '@sveltejs/kit'
     import { onMount } from 'svelte'
     import Geolocation from 'svelte-geolocation'
@@ -144,8 +146,18 @@
     {#if showSidebar && feature}
         <div class="h-full min-w-[20%] max-w-[20%] text-text bg-base flex flex-col overflow-auto overflow-y-auto p-2">
             <div class="w-full flex flex-row">
-                <button on:click={() => showSidebar = false}>
+                <button
+                    class=""
+                    on:click={() => showSidebar = false}
+                >
                     <Close />
+                </button>
+                <div class="flex-grow"></div>
+                <button
+                    class=""
+                    on:click={() => alert('Reported!')}
+                >
+                    <Report />
                 </button>
             </div>
             <div>
@@ -170,8 +182,11 @@
                     {/if}
                 </p>
             </div>
-            <!-- <div class="flex-grow"></div> -->
-            <div>Activity</div>
+            <div class="mt-3 mb-3 border-t-2 border-b-2">
+                <h3>Write a poem with someone!</h3>
+                <ActivityOptions />
+            </div>
+            <div class="flex-grow"></div>
             <div class="text-xs text-subtext1">
                 Source: {feature.properties.Source}
             </div>
