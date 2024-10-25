@@ -12,7 +12,7 @@
         sveltekit:prefetch
         class="self-center w-[50%] h-[5%] mt-10">
         <div class="w-full h-full bg-lavender flex justify-center items-center rounded-3xl">
-            <h1 class="text-mantle">Start your journey now!</h1>
+            <h1 class="text-base">Start your journey now!</h1>
         </div>
     </a>
 </div>

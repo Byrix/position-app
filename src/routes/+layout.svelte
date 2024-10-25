@@ -1,7 +1,6 @@
 <script>
     import { base } from '$app/paths' // DoNotChange
     import { page } from '$app/stores'
-    import { toTitleCase } from '$lib'
     import Fill from '$lib/assets/Fill.svelte'
     import Hamburger from '$lib/assets/Hamburger.svelte'
     import Modal from '$lib/assets/Modal.svelte'
@@ -34,7 +33,7 @@
 </svelte:head>
 
 <!-- Header -->
-<nav class="bg-mantle w-full flex flex-row px-2 h-[50px] justify-center align-middle">
+<nav class="bg-crust w-full flex flex-row px-2 h-[5vh]">
     <div class="dropdown lg:hidden w-max-[11%]">
         <button
             class="btn btn-ghost"
@@ -86,6 +85,7 @@
         class="navbtn z-[1]"
         class:font-bold={$page.url.pathname === '/about'}
         href="{base}/about"
+        on:click={() => hideDropdown = true}
     >
         About
     </a>
@@ -93,13 +93,14 @@
         class="navbtn z-[1]"
         class:font-bold={$page.url.pathname === '/example'}
         href="{base}/example"
+        on:click={() => hideDropdown = true}
     >
         Example
     </a>
 </div>
 
 <!-- Main content -->
-<main class="max-w-[1920px] container mx-auto h-screen bg-base">
+<main class="max-w-[1920px] container mx-auto bg-base h-[95vh]">
     <slot reset />
 </main>
 
@@ -136,13 +137,6 @@
 </Modal>
 
 <style>
-    .navbar {
-        background-color: var(--surface0);
-        display: flex;
-        flex-direction: row;
-        padding: 0.2rem;
-    }
-
     .btn {
         background: none;
         border: none;
@@ -157,16 +151,5 @@
 
     .btn:hover {
         background-color: var(--surface1);
-    }
-
-    .container {
-        margin: 0 auto;
-        max-width: 1920px;
-        padding: 0rem;
-    }
-
-    main {
-        height: 100vh;
-        overflow: auto;
     }
 </style>

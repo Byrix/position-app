@@ -1,4 +1,4 @@
-<div class="w-full text-center p-6 mt-5 text-text bg-base flex flex-col">
+<div class="w-full text-center p-6 text-text bg-base flex flex-col">
     <p>
         New to Melbourne? Looking for community?
         Or just interested in learning more about our city's queer history?
