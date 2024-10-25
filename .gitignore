@@ -21,3 +21,4 @@ vite.config.js.timestamp-*
 symlink-from
 .idea/
 .vscode
+todo.md
