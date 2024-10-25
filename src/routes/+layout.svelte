@@ -68,17 +68,17 @@
     bind:this={mdlNsfw}
 >
     <p>Some locations explored in this app may not be suitable for users of all ages. By clicking the box below you agree that you are at least 18 years of age, or the age of majority in the jurisdiction you are accessing the app from, and consent to viewing sexually-related materials.</p>
-    <div class="flex flex-row">
+    <div class="flex flex-row mt-2">
         <Fill />
         <button
-            class="btn bg-lavender"
+            class="text-base bg-lavender flex h-12 w-full items-center justify-center rounded-3xl mr-1"
             on:click={() => { handleNsfw(true) }}
         >
             I agree, continue
         </button>
         <Fill />
         <button
-            class="btn bg-lavender"
+            class="text-base bg-surface2 flex h-12 w-full items-center justify-center rounded-3xl ml-1"
             on:click={() => { handleNsfw(false) }}
         >
             No, hide NSFW content
