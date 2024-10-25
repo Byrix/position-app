@@ -2,6 +2,7 @@
     import { getCookie, getMapBounds } from '$lib'
     import ActivityOptions from '$lib/assets/ActivityOptions.svelte'
     import Close from '$lib/assets/Close.svelte'
+    import Modal from '$lib/assets/Modal.svelte'
     import Report from '$lib/assets/Report.svelte'
     import { error } from '@sveltejs/kit'
     import { onMount } from 'svelte'
@@ -56,19 +57,24 @@
         if (!showSidebar) { showSidebar = true }
         truncate = true
         feature = event.detail.features[0]
-        console.log(feature)
-        console.log(showSidebar)
     }
 
     // Map symbology
     let map
     function loadMapSymbols() {
-        const images = ['sauna', 'landmark', 'nightlife', 'beat', 'shopfront', 'church', 'crime', 'community', 'hospital', 'gym', 'identity', 'relationship', 'default']
-    // images.forEach(async (image) => {
-        //     const img = await map.loadImage(`/${image}.png`)
-        //     map.addImage(image, img.data)
-        // })
+        const images = ['sauna', 'landmarks', 'nightlife', 'beat', 'shopfront', 'church', 'crime', 'community', 'hospital', 'gym', 'identity', 'relationships', 'default']
+        images.forEach(async (image) => {
+            try {
+                const img = await map.loadImage(`/icon/${image}.png`)
+                map.addImage(image, img.data)
+            } catch (err) {
+                console.err(`loadMapSymbols() | Error loading image | ${image}`)
+            }
+        })
     }
+
+    // Modals
+    let mdlReport, mdlReportSuccess
 </script>
 
 <div class="flex flex-row h-[100%] w-full cursor-default">
@@ -103,21 +109,19 @@
         </Control>
 
         <!-- Data layer -->
-        <!-- <Layer
+        <Layer
             id="research"
             type="symbol"
             source={dataSource}
             layout={{
                 'icon-image': ['match', ['get', 'Classification'], 'Sauna', 'sauna', 'Place of Queer Significance', 'landmark', 'Nightlife', 'nightlife', 'Beat', 'beat', 'Shopfront', 'shopfront', 'Church', 'church', 'Crime', 'crime', 'Community Group', 'community', 'Hospital', 'hospital', 'Gym', 'gym', // NOTHING
-                    'Identity', 'identity', // NOTHING
-                    'Relationships', 'relationship', // NOTHING
-                    'Community', 'community', 'default'], // NOTHING
-                'icon-size': 1
+                    'Identity', 'identity', 'Relationships', 'relationship', 'Community', 'community', 'default'],
+                'icon-size': 0.2
             }}
             filter={nsfwFilter}
             on:click={handleSymbolClick}
-        > -->
-        <Layer
+        >
+            <!-- <Layer
             id="research"
             type="circle"
             source={dataSource}
@@ -127,7 +131,7 @@
             }}
             filter={nsfwFilter}
             on:click={handleSymbolClick}
-        >
+        > -->
             <Popup
                 openOn="hover"
                 let:data
@@ -146,17 +150,12 @@
     {#if showSidebar && feature}
         <div class="h-full min-w-[20%] max-w-[20%] text-text bg-base flex flex-col overflow-auto overflow-y-auto p-2">
             <div class="w-full flex flex-row">
-                <button
-                    class=""
-                    on:click={() => showSidebar = false}
-                >
+                <button on:click={() => showSidebar = false}>
                     <Close />
                 </button>
                 <div class="flex-grow"></div>
-                <button
-                    class=""
-                    on:click={() => alert('Reported!')}
-                >
+                <!-- eslint-disable-next-line no-alert -->
+                <button on:click={() => mdlReport.showModal()}>
                     <Report />
                 </button>
             </div>
@@ -192,4 +191,32 @@
             </div>
         </div>
     {/if}
+
+    <Modal
+        id="report"
+        header="Report a location"
+        bind:this={mdlReport}
+    >
+        <p>Seen something wrong? Please fill out the following with any information you have that is relevant and our team will review shortly!</p>
+        <textarea
+            class="textarea mt-2 bg-mantle text-text"
+            placeholder="Please report your issue here."
+        />
+        <button
+            class="btn text-base bg-lavender mt-2"
+            on:click={() => {
+                mdlReportSuccess.showModal()
+                mdlReport.hideModal()
+            }}
+        >
+            Submit
+        </button>
+    </Modal>
+    <Modal
+        id="report-success"
+        header="Thank you!"
+        bind:this={mdlReportSuccess}
+    >
+        <p>Thank you for your report! Our team will review it shortly and take any actions we determine neccersary. Thank you for helping to make PridePoints a welcome and inclusive space for all!! </p>
+    </Modal>
 </div>
