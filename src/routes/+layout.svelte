@@ -3,19 +3,13 @@
     import { page } from '$app/stores'
     import { toTitleCase } from '$lib'
     import Fill from '$lib/assets/Fill.svelte'
+    import Hamburger from '$lib/assets/Hamburger.svelte'
     import Modal from '$lib/assets/Modal.svelte'
     import { onMount, setContext } from 'svelte'
     import { fade } from 'svelte/transition'
     import '../app.css' // DoNotChange
 
     let nsfw, mdlNsfw, showingModal
-
-    const navOptions = {
-        home: '/',
-        about: '/about',
-        example: '/example',
-        play: '/play'
-    }
 
     onMount(() => {
         if (nsfw === undefined && mdlNsfw) {
@@ -30,6 +24,8 @@
         mdlNsfw.hideModal()
         setContext('nsfw', nsfw)
     }
+
+    let hideDropdown = true
 </script>
 
 <!-- Website title -->
@@ -38,16 +34,68 @@
 </svelte:head>
 
 <!-- Header -->
-<div class="navbar bg-mantle flex flex-row">
-    {#each Object.entries(navOptions) as [name, path]}
-        <a
-            class="btn btn-ghost text-xl flex-grow text-text"
-            class:font-bold={$page.url.pathname === path}
-            href="{base}{path}"
+<nav class="bg-mantle w-full flex flex-row px-2 h-[50px] justify-center align-middle">
+    <div class="dropdown lg:hidden w-max-[11%]">
+        <button
+            class="btn btn-ghost"
+            on:click={() => { hideDropdown = !hideDropdown }}
         >
-            {toTitleCase(name)}
+            <Hamburger />
+        </button>
+    </div>
+    <div class="lg:ml-2 flex">
+        <a
+            class="text-2xl navbtn"
+            href="{base}/"
+        >
+            PridePoints
         </a>
-    {/each}
+    </div>
+    <Fill />
+    <div class="lg:flex hidden w-max-[11%]">
+        <a
+            class="navbtn"
+            class:font-bold={$page.url.pathname === '/about'}
+            href="{base}/about"
+        >
+            About
+        </a>
+        <a
+            class="navbtn"
+            class:font-bold={$page.url.pathname === '/example'}
+            href="{base}/example"
+        >
+            Example
+        </a>
+    </div>
+    <Fill />
+    <div class="flex w-max-[11%]">
+        <a
+            class="text-xl bg-lavender rounded-2xl my-auto p-2 w-24 text-center text-base"
+            href="{base}/play"
+        >
+            Play
+        </a>
+    </div>
+</nav>
+<div
+    class="w-full absolute z-[100] bg-mantle flex flex-col justify-center align-middle"
+    class:hidden={hideDropdown}
+>
+    <a
+        class="navbtn z-[1]"
+        class:font-bold={$page.url.pathname === '/about'}
+        href="{base}/about"
+    >
+        About
+    </a>
+    <a
+        class="navbtn z-[1]"
+        class:font-bold={$page.url.pathname === '/example'}
+        href="{base}/example"
+    >
+        Example
+    </a>
 </div>
 
 <!-- Main content -->
