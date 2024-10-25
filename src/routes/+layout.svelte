@@ -38,7 +38,7 @@
 </svelte:head>
 
 <!-- Header -->
-<div class="navbar bg-surface0 flex flex-row">
+<div class="navbar bg-mantle flex flex-row">
     {#each Object.entries(navOptions) as [name, path]}
         <a
             class="btn btn-ghost text-xl flex-grow text-text"
@@ -51,7 +51,7 @@
 </div>
 
 <!-- Main content -->
-<main class="max-w-[1920px] container mx-auto h-screen">
+<main class="max-w-[1920px] container mx-auto h-screen bg-base">
     <slot reset />
 </main>
 
