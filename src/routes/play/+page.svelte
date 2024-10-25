@@ -23,7 +23,6 @@
         timeout: Infinity, // milliseconds
         maximumAge: 0, // milliseconds, 0 disables cached positions
     }
-
     const watchPosition = true
     let watchedPosition
 
@@ -150,13 +149,12 @@
     </MapLibre>
 
     {#if showSidebar && feature}
-        <div class="h-full min-w-[20%] max-w-[20%] text-text bg-base flex flex-col overflow-auto overflow-y-auto p-2">
+        <div class="flex flex-col text-text bg-base fixed inset-0 w-full h-full z-50 sm:static sm:min-w-[20%] sm:max-w-[25%] sm:h-auto sm:bg-base sm:p-2 sm:overflow-auto sm:overflow-y-auto">
             <div class="w-full flex flex-row">
                 <button on:click={() => showSidebar = false}>
                     <Close />
                 </button>
                 <Fill />
-                <!-- eslint-disable-next-line no-alert -->
                 <button on:click={() => mdlReport.showModal()}>
                     <Report />
                 </button>
