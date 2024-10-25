@@ -20,7 +20,7 @@
      * You can put functions you need for multiple components in a js file in
      * the lib folder, export them in lib/index.js and then import them like this
      */
-    import { getMapBounds } from '$lib'
+    import { getMapBoundsOld } from '$lib'
 
     /**
      * Declare variables
@@ -58,7 +58,7 @@
     ]
 
     // Extent of the map
-    let bounds = getMapBounds(markers)
+    let bounds = getMapBoundsOld(markers)
 
     // Geolocation API related
     const options = {
@@ -257,7 +257,7 @@
             <ControlGroup>
                 <ControlButton
                     on:click={() => {
-                        bounds = getMapBounds(markers)
+                        bounds = getMapBoundsOld(markers)
                     }}
                 >
                     Fit

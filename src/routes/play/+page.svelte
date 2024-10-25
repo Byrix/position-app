@@ -1,5 +1,5 @@
 <script>
-    import { getCookie, getMapBounds } from '$lib'
+    import { getMapBounds } from '$lib'
     import ActivityOptions from '$lib/assets/ActivityOptions.svelte'
     import Close from '$lib/assets/Close.svelte'
     import Fill from '$lib/assets/Fill.svelte'
@@ -79,14 +79,14 @@
 </script>
 
 <div class="flex flex-row h-[100%] w-full cursor-default">
-    <!-- <Geolocation
+    <Geolocation
         getPosition={watchPosition}
         options={options}
         watch={true}
         on:position={(e) => {
             watchedPosition = e.detail
         }}
-    /> -->
+    />
 
     <!-- https://basemaps.cartocdn.com/gl/positron-gl-style/style.json -->
     <MapLibre
@@ -100,14 +100,14 @@
         on:load={loadMapSymbols}
     >
         <!-- Custom control buttons -->
-        <Control class="flex flex-col gap-y-2">
+        <!-- <Control class="flex flex-col gap-y-2">
             <ControlGroup>
                 <GeolocateControl
                     trackUserLocation={true}
                     positionOptions={options}>
                 </GeolocateControl>
             </ControlGroup>
-        </Control>
+        </Control> -->
 
         <!-- Data layer -->
         <Layer
@@ -144,6 +144,7 @@
                         <p>{props.Classification}</p>
                     </div>
                 {/if}
+                Click for more!
             </Popup>
         </Layer>
     </MapLibre>
@@ -184,7 +185,10 @@
             </div>
             <div class="mt-3 mb-3 border-t-2 border-b-2">
                 <h3>Write a poem with someone!</h3>
-                <ActivityOptions />
+                <ActivityOptions
+                    bind:watchedPosition
+                    bind:feature
+                />
             </div>
             <Fill />
             <div class="text-xs text-subtext1">

@@ -22,7 +22,6 @@
             mdlNsfw.showModal()
             showingModal = true
         }
-        console.debug($page.url.pathname)
     })
 
     function handleNsfw(choice) {
