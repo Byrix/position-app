@@ -2,10 +2,11 @@
     import { getCookie, getMapBounds } from '$lib'
     import ActivityOptions from '$lib/assets/ActivityOptions.svelte'
     import Close from '$lib/assets/Close.svelte'
+    import Fill from '$lib/assets/Fill.svelte'
     import Modal from '$lib/assets/Modal.svelte'
     import Report from '$lib/assets/Report.svelte'
     import { error } from '@sveltejs/kit'
-    import { onMount } from 'svelte'
+    import { getContext, onMount } from 'svelte'
     import Geolocation from 'svelte-geolocation'
     import {
         Control,
@@ -32,8 +33,7 @@
 
     // NSFW filtering
     let nsfw, nsfwFilter
-    nsfw = getCookie('nsfw')
-    nsfw = true // TODO debug only to remove
+    nsfw = getContext('nsfw')
     if (!nsfw) { nsfwFilter = ['!=', ['get', 'Classification'], 'Beat'] }
 
     // Data loading
@@ -69,6 +69,7 @@
                 map.addImage(image, img.data)
             } catch (err) {
                 console.err(`loadMapSymbols() | Error loading image | ${image}`)
+                console.err(err)
             }
         })
     }
@@ -153,7 +154,7 @@
                 <button on:click={() => showSidebar = false}>
                     <Close />
                 </button>
-                <div class="flex-grow"></div>
+                <Fill />
                 <!-- eslint-disable-next-line no-alert -->
                 <button on:click={() => mdlReport.showModal()}>
                     <Report />
@@ -185,7 +186,7 @@
                 <h3>Write a poem with someone!</h3>
                 <ActivityOptions />
             </div>
-            <div class="flex-grow"></div>
+            <Fill />
             <div class="text-xs text-subtext1">
                 Source: {feature.properties.Source}
             </div>
