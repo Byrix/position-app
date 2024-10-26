@@ -238,6 +238,16 @@
 
     </MapLibre>
 
+    {#if watchedPosition}
+        {@const geo = watchedPosition.coords}
+        <div class="absolute left-[60px] top-[6vh] bg-mantle text-text rounded flex flex-col p-2">
+            <p>Longitude: {geo.longitude}</p>
+            <p>Latitude: {geo.latitude}</p>
+            <p>Accuracy: {geo.accuracy}m</p>
+            <p>Speed: {geo.speed}</p>
+        </div>
+    {/if}
+
     {#if showSidebar && feature}
         <div class="flex flex-col text-text bg-base fixed inset-0 w-full h-full z-50 sm:static sm:min-w-[20%] sm:max-w-[25%] sm:h-auto sm:bg-base sm:p-2 sm:overflow-auto sm:overflow-y-auto">
             <div class="w-full flex flex-row">
