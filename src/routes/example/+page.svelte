@@ -221,6 +221,7 @@
                 watch={true}
                 on:position={(e) => {
                     watchedPosition = e.detail
+                    console.log(watchedPosition)
                 }}
             />
 
