@@ -1,19 +1,19 @@
 <script>
     import { getMapBounds } from '$lib'
     import ActivityOptions from '$lib/assets/ActivityOptions.svelte'
-    import Close from '$lib/assets/Close.svelte'
     import Fill from '$lib/assets/Fill.svelte'
+    import FormElement from '$lib/assets/FormElement.svelte'
+    import Close from '$lib/assets/icons/Close.svelte'
+    import Report from '$lib/assets/icons/Report.svelte'
     import Modal from '$lib/assets/Modal.svelte'
-    import Report from '$lib/assets/Report.svelte'
     import { error } from '@sveltejs/kit'
     import { getContext, onMount } from 'svelte'
     import Geolocation from 'svelte-geolocation'
     import {
-        Control,
-        ControlGroup,
-        GeolocateControl,
         Layer,
+        MapEvents,
         MapLibre,
+        Marker,
         Popup
     } from 'svelte-maplibre'
 
@@ -29,6 +29,9 @@
     // Misc
     let truncate
     const txtMaxLen = 150
+    const markerTypes = ['Sauna', 'Place of Queer Significance', 'Nightlife', 'Beat', 'Shopfront', 'Church', 'Crime', 'Community Group', 'Hospital', 'Gym', 'Identity', 'Relationships', 'Community']
+    let markerEvent
+    let mdlReport, mdlReportSuccess, mdlMarkers
 
     // NSFW filtering
     let nsfw, nsfwFilter
@@ -54,6 +57,7 @@
     let showSidebar = false
     function handleSymbolClick(event) {
         if (!showSidebar) { showSidebar = true }
+        mdlMarkers.hideModal()
         truncate = true
         feature = event.detail.features[0]
     }
@@ -67,14 +71,33 @@
                 const img = await map.loadImage(`/icon/${image}.png`)
                 map.addImage(image, img.data)
             } catch (err) {
-                console.err(`loadMapSymbols() | Error loading image | ${image}`)
-                console.err(err)
+                console.error(`loadMapSymbols() | Error loading image | ${image}`)
+                console.error(err)
             }
         })
     }
 
-    // Modals
-    let mdlReport, mdlReportSuccess
+    // Add a new marker
+    let formRef, formSubmitter
+    let mrkName, mrkType, mrkAdd, mrkDesc
+    let markers = []
+    function addMarker() {
+        const newMarker = {
+            properties: {
+                Name: mrkName,
+                Address: mrkAdd,
+                Story: mrkDesc,
+                Classification: mrkType,
+                Source: 'User added'
+            },
+            geometry: {
+                lngLat: markerEvent.detail.lngLat
+            }
+        }
+
+        markers = [...markers, newMarker]
+        mdlMarkers.hideModal()
+    }
 </script>
 
 <div class="flex flex-row h-[100%] w-full cursor-default">
@@ -98,15 +121,6 @@
         bind:map={map}
         on:load={loadMapSymbols}
     >
-        <!-- Custom control buttons -->
-        <!-- <Control class="flex flex-col gap-y-2">
-            <ControlGroup>
-                <GeolocateControl
-                    trackUserLocation={true}
-                    positionOptions={options}>
-                </GeolocateControl>
-            </ControlGroup>
-        </Control> -->
 
         <!-- Data layer -->
         <Layer
@@ -146,6 +160,42 @@
                 Click for more!
             </Popup>
         </Layer>
+
+        <MapEvents
+            on:click={(e) => {
+                markerEvent = e
+                mdlMarkers.showModal()
+            }}
+        />
+
+        <!-- {#each markers as marker, i (i)}
+            {@const geo = marker.geometry}
+            {@const prop = marker.properties}
+            <Marker
+                lngLat={geo.lngLat}
+                class="grid h-8 w-14 place-items-center rounded-md border
+                    border-gray-00 bg-red-200 text-black shadow-2xl
+                    focus:outline-2 focus:outline-black"
+            >
+                <span>
+                    {prop.Name}
+                </span>
+
+                <Popup
+                    openOn="hover"
+                    offset={[0, -10]}>
+                    <div class="text-lg font-bold">{prop.Name}</div>
+                </Popup>
+                {#if prop.Classification === 'Church'}
+                    <Church />
+                {:else if prop.Classification === 'Beat'}
+                    <Beat />
+                {:else}
+                    <Default />
+                {/if}
+            </Marker>
+        {/each} -->
+
     </MapLibre>
 
     {#if showSidebar && feature}
@@ -221,5 +271,61 @@
         bind:this={mdlReportSuccess}
     >
         <p>Thank you for your report! Our team will review it shortly and take any actions we determine neccersary. Thank you for helping to make PridePoints a welcome and inclusive space for all!! </p>
+    </Modal>
+    <Modal
+        id="addPoint"
+        header="Add a new point!"
+        bind:this={mdlMarkers}
+    >
+        <form
+            id="new-marker"
+            class="form items-center"
+            bind:this={formRef}
+        >
+            <FormElement label="Enter the name">
+                <input
+                    type="text"
+                    placeholder="Name"
+                    class="input w-full max-w-xs"
+                    bind:value={mrkName}
+                />
+            </FormElement>
+            <FormElement label="Select the marker type">
+                <select
+                    class="select select-bordered w-full max-w-xs"
+                    bind:value={mrkType}
+                >
+                    <option
+                        disabled
+                        selected>Pick one</option>
+                    {#each markerTypes as type}
+                        <option>{type}</option>
+                    {/each}
+                </select>
+            </FormElement>
+            <FormElement label="Enter the address">
+                <input
+                    type="text"
+                    placeholder="Address"
+                    class="input w-full max-w-xs"
+                    bind:value={mrkAdd}
+                />
+            </FormElement>
+            <FormElement label="What is the significance">
+                <textarea
+                    class="textarea textarea-bordered w-full max-w-xs"
+                    placeholder="Description..."
+                    bind:value={mrkDesc}
+                />
+            </FormElement>
+            <button
+                type="submit"
+                class="btn bg-green text-base"
+                bind:this={formSubmitter}
+                on:click={addMarker}
+            >
+                Submit!
+            </button>
+        </form>
     </Modal>
 </div>

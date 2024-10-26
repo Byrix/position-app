@@ -2,7 +2,7 @@
     import { base } from '$app/paths' // DoNotChange
     import { page } from '$app/stores'
     import Fill from '$lib/assets/Fill.svelte'
-    import Hamburger from '$lib/assets/Hamburger.svelte'
+    import Hamburger from '$lib/assets/icons/Hamburger.svelte'
     import Modal from '$lib/assets/Modal.svelte'
     import { onMount, setContext } from 'svelte'
     import { fade } from 'svelte/transition'

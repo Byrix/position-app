@@ -3,8 +3,8 @@
     export let header = ''
     export let close = true
 
-    import Close from '$lib/assets/Close.svelte'
-    import Fill from '$lib/assets/Fill.svelte'
+    import Close from '$lib/assets/icons/Close.svelte'
+    import Fill from '$lib/assets/icons/Fill.svelte'
 
     let modal
     export function showModal() {
