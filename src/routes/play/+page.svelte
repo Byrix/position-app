@@ -59,6 +59,7 @@
         if (!showSidebar) { showSidebar = true }
         mdlMarkers.hideModal()
         truncate = true
+        console.log(event)
         feature = event.detail.features[0]
     }
 
@@ -168,33 +169,22 @@
             }}
         />
 
-        <!-- {#each markers as marker, i (i)}
+        {#each markers as marker, i (i)}
             {@const geo = marker.geometry}
             {@const prop = marker.properties}
             <Marker
                 lngLat={geo.lngLat}
-                class="grid h-8 w-14 place-items-center rounded-md border
-                    border-gray-00 bg-red-200 text-black shadow-2xl
-                    focus:outline-2 focus:outline-black"
+                class="grid h-3 w-3 place-items-center rounded-2xl bg-lavender"
             >
-                <span>
-                    {prop.Name}
-                </span>
-
                 <Popup
                     openOn="hover"
-                    offset={[0, -10]}>
+                    offset={[0, -10]}
+                >
                     <div class="text-lg font-bold">{prop.Name}</div>
+                    <div>{prop.Story}</div>
                 </Popup>
-                {#if prop.Classification === 'Church'}
-                    <Church />
-                {:else if prop.Classification === 'Beat'}
-                    <Beat />
-                {:else}
-                    <Default />
-                {/if}
             </Marker>
-        {/each} -->
+        {/each}
 
     </MapLibre>
 
