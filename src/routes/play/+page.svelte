@@ -236,7 +236,7 @@
         <!-- Floating Button -->
         <button
             on:click={toggleLineLayer}
-            class="absolute bottom-10 left-2.5 bg-lavender hover:bg-blue text-white font-bold py-2 px-4 rounded"
+            class="absolute bottom-10 left-2.5 bg-lavender hover:bg-mauve text-white font-bold py-2 px-4 rounded"
         >
             Start QueerQuest
         </button>
