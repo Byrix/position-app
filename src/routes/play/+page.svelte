@@ -31,7 +31,7 @@
     const txtMaxLen = 150
     const markerTypes = ['Sauna', 'Place of Queer Significance', 'Nightlife', 'Beat', 'Shopfront', 'Church', 'Crime', 'Community Group', 'Hospital', 'Gym', 'Identity', 'Relationships', 'Community']
     let markerEvent
-    let mdlReport, mdlReportSuccess, mdlMarkers
+    let mdlReport, mdlReportSuccess, mdlMarkers, mdlQuest
 
     // NSFW filtering
     let nsfw, nsfwFilter
@@ -120,6 +120,7 @@
             map.setLayoutProperty('walking-layer', 'visibility', 'none')
         } else {
             map.setLayoutProperty('walking-layer', 'visibility', 'visible')
+            mdlQuest.showModal()
         }
         lineLayerVisible = !lineLayerVisible // Toggle the flag
     }
@@ -159,10 +160,10 @@
                 layout={{
                     'line-cap': 'round',
                     'line-join': 'round',
-                    'visibility': 'visible' // Initially visible
+                    'visibility': 'none' // Initial visibility
                 }}
                 paint={{
-                    'line-color': '#b100e8', // Red line color for visibility
+                    'line-color': '#b100e8', // Purple line color for visibility
                     'line-width': 3
                 }}
             ></Layer>
@@ -371,5 +372,12 @@
                 Submit!
             </button>
         </form>
+    </Modal>
+    <Modal
+        id="questStart"
+        header="QueerQuest Unlocked!"
+        bind:this={mdlQuest}
+    >
+        <p>Congratulations! You've started a QueerQuest. Make your way to the purple journey path and visit all of the locations to complete this quest.</p>
     </Modal>
 </div>
