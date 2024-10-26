@@ -1,4 +1,5 @@
 <script>
+    import { base } from '$app/paths'
     import { getMapBounds } from '$lib'
     import ActivityOptions from '$lib/assets/ActivityOptions.svelte'
     import Fill from '$lib/assets/Fill.svelte'
@@ -32,6 +33,7 @@
     const markerTypes = ['Sauna', 'Place of Queer Significance', 'Nightlife', 'Beat', 'Shopfront', 'Church', 'Crime', 'Community Group', 'Hospital', 'Gym', 'Identity', 'Relationships', 'Community']
     let markerEvent
     let mdlReport, mdlReportSuccess, mdlMarkers, mdlQuest
+    let map
 
     // NSFW filtering
     let nsfw, nsfwFilter
@@ -50,6 +52,9 @@
             console.error(err)
             throw error(500, err)
         })
+
+        map.on('click', 'research', (e) => { handleSymbolClick(e) })
+        map.on('touchstart', 'research', (e) => { handleSymbolClick(e) })
     })
 
     // Sidebar
@@ -59,17 +64,15 @@
         if (!showSidebar) { showSidebar = true }
         mdlMarkers.hideModal()
         truncate = true
-        console.log(event)
         feature = event.detail.features[0]
     }
 
     // Map symbology
-    let map
     function loadMapSymbols() {
         const images = ['sauna', 'landmarks', 'nightlife', 'beat', 'shopfront', 'church', 'crime', 'community', 'hospital', 'gym', 'identity', 'relationships', 'default']
         images.forEach(async (image) => {
             try {
-                const img = await map.loadImage(`/icon/${image}.png`)
+                const img = await map.loadImage(`${base}/icon/${image}.png`)
                 map.addImage(image, img.data)
             } catch (err) {
                 console.error(`loadMapSymbols() | Error loading image | ${image}`)
@@ -180,19 +183,10 @@
                 'icon-size': 0.2
             }}
             filter={nsfwFilter}
+            on:touchstart={handleSymbolClick}
             on:click={handleSymbolClick}
+            interactive={true}
         >
-            <!-- <Layer
-            id="research"
-            type="circle"
-            source={dataSource}
-            paint={{
-                'circle-radius': 5,
-                'circle-color': 'red'
-            }}
-            filter={nsfwFilter}
-            on:click={handleSymbolClick}
-        > -->
             <Popup
                 openOn="hover"
                 let:data
@@ -200,16 +194,16 @@
                 {@const props = data?.properties}
                 {#if props}
                     <div class="flex flex-col gap-2">
-                        <p>{props.Name}</p>
+                        <p class="text-bold">{props.Name}</p>
                         <p>{props.Classification}</p>
+                        <!-- <p>{props.Story}</p> -->
                     </div>
                 {/if}
-                Click for more!
             </Popup>
         </Layer>
 
         <!-- <MapEvents
-            on:click={(e) => {
+            on:touchstart={(e) => {
                 console.log(e)
                 // markerEvent = e
                 // mdlMarkers.showModal()
@@ -235,6 +229,7 @@
 
         <!-- Floating Button -->
         <button
+            on:touchstart={toggleLineLayer}
             on:click={toggleLineLayer}
             class="absolute bottom-10 left-2.5 bg-lavender hover:bg-mauve text-white font-bold py-2 px-4 rounded"
         >
@@ -246,11 +241,17 @@
     {#if showSidebar && feature}
         <div class="flex flex-col text-text bg-base fixed inset-0 w-full h-full z-50 sm:static sm:min-w-[20%] sm:max-w-[25%] sm:h-auto sm:bg-base sm:p-2 sm:overflow-auto sm:overflow-y-auto">
             <div class="w-full flex flex-row">
-                <button on:click={() => showSidebar = false}>
+                <button
+                    on:touchstart={() => showSidebar = false}
+                    on:click={() => showSidebar = false}
+                >
                     <Close />
                 </button>
                 <Fill />
-                <button on:click={() => mdlReport.showModal()}>
+                <button
+                    on:touchstart={() => mdlReport.showModal()}
+                    on:click={() => mdlReport.showModal()}
+                >
                     <Report />
                 </button>
             </div>
@@ -263,12 +264,14 @@
                         {#if truncate}
                             {feature.properties.Story.slice(0, txtMaxLen)}
                             <button
+                                on:touchstart={() => { truncate = false }}
                                 on:click={() => { truncate = false }}
                                 class="text-sky">Read more...</button>
                         {:else}
                             {feature.properties.Story}
                             <button
-                                on:click={() => { truncate = true }}
+                                on:touchstart={() => { truncate = true }}
+                                on:click={() => truncate = true}
                                 class="text-sky">Read less...</button>
                         {/if}
                     {:else}
@@ -302,6 +305,10 @@
         />
         <button
             class="btn text-base bg-lavender mt-2"
+            on:touchstart={() => {
+                mdlReportSuccess.showModal()
+                mdlReport.hideModal()
+            }}
             on:click={() => {
                 mdlReportSuccess.showModal()
                 mdlReport.hideModal()
@@ -367,6 +374,7 @@
                 type="submit"
                 class="btn bg-green text-base"
                 bind:this={formSubmitter}
+                on:touchstart={addMarker}
                 on:click={addMarker}
             >
                 Submit!

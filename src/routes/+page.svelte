@@ -1,3 +1,7 @@
+<script>
+    import { base } from '$app/paths'
+</script>
+
 <svelte:head>
     <title>Home Page</title>
 </svelte:head>
@@ -8,7 +12,7 @@
 
     <!-- svelte-ignore illegal-attribute-character -->
     <a
-        href="/play"
+        href="{base}/play"
         sveltekit:prefetch
         class="self-center w-[50%] h-[5%] mt-10">
         <div class="w-full h-full bg-lavender flex justify-center items-center rounded-3xl">
