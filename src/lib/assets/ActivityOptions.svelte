@@ -5,7 +5,7 @@
     export let feature
     export let poetry
 
-    $: actEl = getDistance([watchedPosition.coords.longitude, watchedPosition.coords.latitude], feature.geometry.coordinates) < 10
+    $: actEl = getDistance([watchedPosition?.coords.longitude, watchedPosition?.coords.latitude], feature.geometry.coordinates) < 10
 
     let options = []
     let poem = []

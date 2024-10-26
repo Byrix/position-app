@@ -53,8 +53,8 @@
             throw error(500, err)
         })
 
-        fetch('/melbourne_cbd_walking.geojson').then((response) => {
-            response.json()
+        fetch('melbourne_cbd_walking.geojson').then((response) => {
+            return response.json()
         }).then((data) => {
             routeData = data
         }).catch((error) => {
@@ -70,21 +70,16 @@
             console.error(err)
             throw error(500, err)
         })
-
-        if (map) {
-            map.on('click', 'research', handleSymbolClick)
-            map.on('touchstart', 'research', handleSymbolClick)
-        } else {
-            console.debug('Map not loaded yet')
-        }
     })
 
     // Sidebar
     let feature
     let showSidebar = false
+    let symbolClick
     function handleSymbolClick(event) {
+        symbolClick = true
         if (!showSidebar) { showSidebar = true }
-        mdlMarkers.hideModal()
+        // mdlMarkers.hideModal()
         truncate = true
         feature = event.detail.features[0]
     }
@@ -126,22 +121,22 @@
     }
 
     // Walking tour routes
-    let lineLayerVisible = true // To toggle visibility
+    let lineLayerVisible = false // To toggle visibility
     // Function to toggle the line layer visibility
     function toggleLineLayer() {
-        map.setLayoutProperty('walking-layer', 'visibility', lineLayerVisible ? 'none' : 'visible')
-        if (!lineLayerVisible) { mdlQuest.showModal() }
         lineLayerVisible = !lineLayerVisible // Toggle the flag
+        if (lineLayerVisible) { mdlQuest.showModal() }
+        console.debug(lineLayerVisible)
     }
 </script>
 
-<div class="flex flex-row h-[100%] w-full cursor-default">
+<div class="flex flex-row h-[100%] w-full cursor-default z-10">
     <MapLibre
         class="map flex-grow min-h-[500px] cursor-default"
         standardControls
         style="https://basemaps.cartocdn.com/gl/positron-gl-style/style.json"
         bind:bounds
-        bind:center={watchedPosition}
+        center={[144.946457, -37.840935]}
         zoom={14}
         bind:map={map}
         on:load={loadMapSymbols}
@@ -175,16 +170,18 @@
             </Popup>
         </Layer>
 
-        <!-- <MapEvents
+        <MapEvents
             on:touchstart={(e) => {
-                console.log(e)
-                // markerEvent = e
-                // mdlMarkers.showModal()
+                markerEvent = e
+                mdlMarkers.showModal()
             }}
-        /> -->
+            on:click={(e) => {
+                markerEvent = e
+                if (symbolClick) { symbolClick = false } else { mdlMarkers.showModal() }
+            }}
+        />
 
-        <!-- Line Layer (GeoJSON) -->
-        {#if routeData}
+        {#if lineLayerVisible}
             <Layer
                 id="walking-layer"
                 type="line"
@@ -195,7 +192,7 @@
                 layout={{
                     'line-cap': 'round',
                     'line-join': 'round',
-                    'visibility': 'none' // Initial visibility
+                    'visibility': 'visible',
                 }}
                 paint={{
                     'line-color': '#b100e8', // Purple line color for visibility
@@ -231,7 +228,6 @@
             <p>Speed: {geo.speed}</p>
         </div>
     {/if}
-    <!-- Floating Button -->
     <button
         on:touchstart={toggleLineLayer}
         on:click={toggleLineLayer}
@@ -391,7 +387,8 @@
     >
         <p>Congratulations! You've started a QueerQuest. Make your way to the purple journey path and visit all of the locations to complete this quest. <br>Note: We create these quests using geospatial network analysis operations to find you the most efficient routes! </p>
     </Modal>
-
+</div>
+<div class="-z-50 hidden pointer-events-none">
     <Geolocation
         getPosition={watchPosition}
         options={options}
@@ -399,6 +396,5 @@
         on:position={(e) => {
             watchedPosition = e.detail
         }}
-        class="hidden"
     />
 </div>
