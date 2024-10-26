@@ -41,7 +41,7 @@
     if (!nsfw) { nsfwFilter = ['all', ['!=', ['get', 'Classification'], 'Beat'], ['!=', ['get', 'Classification'], 'Sauna']] }
 
     // Data loading
-    let dataSource, bounds
+    let dataSource, bounds, routeData, poetry
     onMount(async () => {
         fetch('data.geojson').then((resp) => {
             return resp.json()
@@ -53,8 +53,30 @@
             throw error(500, err)
         })
 
-        map.on('click', 'research', (e) => { handleSymbolClick(e) })
-        map.on('touchstart', 'research', (e) => { handleSymbolClick(e) })
+        fetch('/melbourne_cbd_walking.geojson').then((response) => {
+            response.json()
+        }).then((data) => {
+            routeData = data
+        }).catch((error) => {
+            console.error('Error loading GeoJSON:', error)
+            throw error(500, error)
+        })
+
+        fetch('poem.json').then((resp) => {
+            return resp.json()
+        }).then((data) => {
+            poetry = data
+        }).catch((err) => {
+            console.error(err)
+            throw error(500, err)
+        })
+
+        if (map) {
+            map.on('click', 'research', handleSymbolClick)
+            map.on('touchstart', 'research', handleSymbolClick)
+        } else {
+            console.debug('Map not loaded yet')
+        }
     })
 
     // Sidebar
@@ -105,41 +127,15 @@
 
     // Walking tour routes
     let lineLayerVisible = true // To toggle visibility
-    let geojsonData
-
-    // Fetch the GeoJSON data from the static folder
-    onMount(() => {
-        fetch('/melbourne_cbd_walking.geojson') // Adjust path if necessary
-            .then(response => response.json())
-            .then((data) => {
-                geojsonData = data
-            })
-            .catch(error => console.error('Error loading GeoJSON:', error))
-    })
-
     // Function to toggle the line layer visibility
     function toggleLineLayer() {
-        if (lineLayerVisible) {
-            map.setLayoutProperty('walking-layer', 'visibility', 'none')
-        } else {
-            map.setLayoutProperty('walking-layer', 'visibility', 'visible')
-            mdlQuest.showModal()
-        }
+        map.setLayoutProperty('walking-layer', 'visibility', lineLayerVisible ? 'none' : 'visible')
+        if (!lineLayerVisible) { mdlQuest.showModal() }
         lineLayerVisible = !lineLayerVisible // Toggle the flag
     }
 </script>
 
 <div class="flex flex-row h-[100%] w-full cursor-default">
-    <Geolocation
-        getPosition={watchPosition}
-        options={options}
-        watch={true}
-        on:position={(e) => {
-            watchedPosition = e.detail
-        }}
-    />
-
-    <!-- https://basemaps.cartocdn.com/gl/positron-gl-style/style.json -->
     <MapLibre
         class="map flex-grow min-h-[500px] cursor-default"
         standardControls
@@ -150,28 +146,6 @@
         bind:map={map}
         on:load={loadMapSymbols}
     >
-
-        <!-- Line Layer (GeoJSON) -->
-        {#if geojsonData}
-            <Layer
-                id="walking-layer"
-                type="line"
-                source={{
-                    type: 'geojson',
-                    data: geojsonData
-                }}
-                layout={{
-                    'line-cap': 'round',
-                    'line-join': 'round',
-                    'visibility': 'none' // Initial visibility
-                }}
-                paint={{
-                    'line-color': '#b100e8', // Purple line color for visibility
-                    'line-width': 3
-                }}
-            ></Layer>
-        {/if}
-
         <!-- Data layer -->
         <Layer
             id="research"
@@ -180,7 +154,7 @@
             layout={{
                 'icon-image': ['match', ['get', 'Classification'], 'Sauna', 'sauna', 'Place of Queer Significance', 'landmark', 'Nightlife', 'nightlife', 'Beat', 'beat', 'Shopfront', 'shopfront', 'Church', 'church', 'Crime', 'crime', 'Community Group', 'community', 'Hospital', 'hospital', 'Gym', 'gym', // NOTHING
                     'Identity', 'identity', 'Relationships', 'relationship', 'Community', 'community', 'default'],
-                'icon-size': 0.2
+                'icon-size': 0.3
             }}
             filter={nsfwFilter}
             on:touchstart={handleSymbolClick}
@@ -196,7 +170,6 @@
                     <div class="flex flex-col gap-2">
                         <p class="text-bold">{props.Name}</p>
                         <p>{props.Classification}</p>
-                        <!-- <p>{props.Story}</p> -->
                     </div>
                 {/if}
             </Popup>
@@ -209,6 +182,27 @@
                 // mdlMarkers.showModal()
             }}
         /> -->
+
+        <!-- Line Layer (GeoJSON) -->
+        {#if routeData}
+            <Layer
+                id="walking-layer"
+                type="line"
+                source={{
+                    type: 'geojson',
+                    data: routeData
+                }}
+                layout={{
+                    'line-cap': 'round',
+                    'line-join': 'round',
+                    'visibility': 'none' // Initial visibility
+                }}
+                paint={{
+                    'line-color': '#b100e8', // Purple line color for visibility
+                    'line-width': 3
+                }}
+            />
+        {/if}
 
         {#each markers as marker, i (i)}
             {@const geo = marker.geometry}
@@ -226,16 +220,6 @@
                 </Popup>
             </Marker>
         {/each}
-
-        <!-- Floating Button -->
-        <button
-            on:touchstart={toggleLineLayer}
-            on:click={toggleLineLayer}
-            class="absolute bottom-10 left-2.5 bg-lavender hover:bg-mauve text-white font-bold py-2 px-4 rounded"
-        >
-            Start QueerQuest
-        </button>
-
     </MapLibre>
 
     {#if watchedPosition}
@@ -247,6 +231,14 @@
             <p>Speed: {geo.speed}</p>
         </div>
     {/if}
+    <!-- Floating Button -->
+    <button
+        on:touchstart={toggleLineLayer}
+        on:click={toggleLineLayer}
+        class="absolute bottom-10 left-2.5 bg-lavender hover:bg-mauve text-base font-bold py-2 px-4 rounded"
+    >
+        Start QueerQuest
+    </button>
 
     {#if showSidebar && feature}
         <div class="flex flex-col text-text bg-base fixed inset-0 w-full h-full z-50 sm:static sm:min-w-[20%] sm:max-w-[25%] sm:h-auto sm:bg-base sm:p-2 sm:overflow-auto sm:overflow-y-auto">
@@ -294,6 +286,7 @@
                 <ActivityOptions
                     bind:watchedPosition
                     bind:feature
+                    bind:poetry
                 />
             </div>
             <Fill />
@@ -398,4 +391,14 @@
     >
         <p>Congratulations! You've started a QueerQuest. Make your way to the purple journey path and visit all of the locations to complete this quest. <br>Note: We create these quests using geospatial network analysis operations to find you the most efficient routes! </p>
     </Modal>
+
+    <Geolocation
+        getPosition={watchPosition}
+        options={options}
+        watch={true}
+        on:position={(e) => {
+            watchedPosition = e.detail
+        }}
+        class="hidden"
+    />
 </div>

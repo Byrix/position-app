@@ -21,7 +21,7 @@
         nsfw = choice
         showingModal = false
         mdlNsfw.hideModal()
-        setContext('nsfw', nsfw)
+        try { setContext('nsfw', nsfw) } catch (err) { console.error(err) }
     }
 
     let hideDropdown = true
