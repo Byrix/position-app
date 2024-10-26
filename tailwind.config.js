@@ -1,3 +1,4 @@
+import catppuccin from '@catppuccin/tailwindcss'
 import typography from '@tailwindcss/typography'
 import daisyui from 'daisyui'
 
@@ -10,7 +11,7 @@ export default {
     plugins: [
         daisyui,
         typography,
-        require('@catppuccin/tailwindcss')({
+        catppuccin({
             prefex: '',
             defaultFlavour: 'latte',
         }),
