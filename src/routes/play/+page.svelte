@@ -162,7 +162,7 @@
                     'visibility': 'visible' // Initially visible
                 }}
                 paint={{
-                    'line-color': '#FF0000', // Red line color for visibility
+                    'line-color': '#b100e8', // Red line color for visibility
                     'line-width': 3
                 }}
             ></Layer>
@@ -234,9 +234,9 @@
         <!-- Floating Button -->
         <button
             on:click={toggleLineLayer}
-            class="absolute bottom-10 left-2.5 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+            class="absolute bottom-10 left-2.5 bg-lavender hover:bg-blue text-white font-bold py-2 px-4 rounded"
         >
-            Toggle Walking Tour Layer
+            Start QueerQuest
         </button>
 
     </MapLibre>
