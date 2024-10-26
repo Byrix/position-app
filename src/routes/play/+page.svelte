@@ -99,6 +99,30 @@
         markers = [...markers, newMarker]
         mdlMarkers.hideModal()
     }
+
+    // Walking tour routes
+    let lineLayerVisible = true // To toggle visibility
+    let geojsonData
+
+    // Fetch the GeoJSON data from the static folder
+    onMount(() => {
+        fetch('/melbourne_cbd_walking.geojson') // Adjust path if necessary
+            .then(response => response.json())
+            .then((data) => {
+                geojsonData = data
+            })
+            .catch(error => console.error('Error loading GeoJSON:', error))
+    })
+
+    // Function to toggle the line layer visibility
+    function toggleLineLayer() {
+        if (lineLayerVisible) {
+            map.setLayoutProperty('walking-layer', 'visibility', 'none')
+        } else {
+            map.setLayoutProperty('walking-layer', 'visibility', 'visible')
+        }
+        lineLayerVisible = !lineLayerVisible // Toggle the flag
+    }
 </script>
 
 <div class="flex flex-row h-[100%] w-full cursor-default">
@@ -122,6 +146,27 @@
         bind:map={map}
         on:load={loadMapSymbols}
     >
+
+        <!-- Line Layer (GeoJSON) -->
+        {#if geojsonData}
+            <Layer
+                id="walking-layer"
+                type="line"
+                source={{
+                    type: 'geojson',
+                    data: geojsonData
+                }}
+                layout={{
+                    'line-cap': 'round',
+                    'line-join': 'round',
+                    'visibility': 'visible' // Initially visible
+                }}
+                paint={{
+                    'line-color': '#FF0000', // Red line color for visibility
+                    'line-width': 3
+                }}
+            ></Layer>
+        {/if}
 
         <!-- Data layer -->
         <Layer
@@ -185,6 +230,14 @@
                 </Popup>
             </Marker>
         {/each}
+
+        <!-- Floating Button -->
+        <button
+            on:click={toggleLineLayer}
+            class="absolute bottom-10 left-2.5 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+        >
+            Toggle Walking Tour Layer
+        </button>
 
     </MapLibre>
 
