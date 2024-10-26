@@ -61,10 +61,10 @@
         </a>
         <a
             class="navbtn"
-            class:font-bold={$page.url.pathname === '/example'}
-            href="{base}/example"
+            class:font-bold={$page.url.pathname === '/leaderboard'}
+            href="{base}/leaderboard"
         >
-            Example
+            Leaderboard
         </a>
     </div>
     <Fill />
@@ -91,11 +91,11 @@
     </a>
     <a
         class="navbtn z-[1]"
-        class:font-bold={$page.url.pathname === '/example'}
-        href="{base}/example"
+        class:font-bold={$page.url.pathname === '/leaderboard'}
+        href="{base}/leaderboard"
         on:click={() => hideDropdown = true}
     >
-        Example
+        Leaderboard
     </a>
 </div>
 
