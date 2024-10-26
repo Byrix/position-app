@@ -207,12 +207,13 @@
             </Popup>
         </Layer>
 
-        <MapEvents
+        <!-- <MapEvents
             on:click={(e) => {
-                markerEvent = e
-                mdlMarkers.showModal()
+                console.log(e)
+                // markerEvent = e
+                // mdlMarkers.showModal()
             }}
-        />
+        /> -->
 
         {#each markers as marker, i (i)}
             {@const geo = marker.geometry}
