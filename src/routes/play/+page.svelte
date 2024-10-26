@@ -386,6 +386,6 @@
         header="QueerQuest Unlocked!"
         bind:this={mdlQuest}
     >
-        <p>Congratulations! You've started a QueerQuest. Make your way to the purple journey path and visit all of the locations to complete this quest.</p>
+        <p>Congratulations! You've started a QueerQuest. Make your way to the purple journey path and visit all of the locations to complete this quest. <br>Note: We create these quests using geospatial network analysis operations to find you the most efficient routes! </p>
     </Modal>
 </div>
