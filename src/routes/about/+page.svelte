@@ -15,7 +15,7 @@
         mark on the map. Slowly build up your own queer history through interactions with others in the community. <br><br>
     </p>
     <hr class="border-surface0" />
-    <h2 class="font-bold italic text-xl">Queer quests</h2>
+    <h2 class="font-bold italic text-xl">QueerQuests</h2>
     <p>
         Don't feel like playing with others? That's okay! You can still earn points by visiting locations and
         completing Queer Quests. These include GNSS enabled walking tours, collaborative story telling, contributing
