@@ -1,4 +1,5 @@
 <script>
+    import { base } from '$app/paths'
     import { getMapBounds } from '$lib'
     import ActivityOptions from '$lib/assets/ActivityOptions.svelte'
     import Fill from '$lib/assets/Fill.svelte'
@@ -69,7 +70,7 @@
         const images = ['sauna', 'landmarks', 'nightlife', 'beat', 'shopfront', 'church', 'crime', 'community', 'hospital', 'gym', 'identity', 'relationships', 'default']
         images.forEach(async (image) => {
             try {
-                const img = await map.loadImage(`/icon/${image}.png`)
+                const img = await map.loadImage(`${base}/icon/${image}.png`)
                 map.addImage(image, img.data)
             } catch (err) {
                 console.error(`loadMapSymbols() | Error loading image | ${image}`)
