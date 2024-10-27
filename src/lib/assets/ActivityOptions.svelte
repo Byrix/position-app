@@ -7,11 +7,12 @@
 
     $: actEl = getDistance([watchedPosition?.coords.longitude, watchedPosition?.coords.latitude], feature.geometry.coordinates) < 10
 
-    let options = []
     let poem = []
     let selection = ''
 
     const getOptions = () => [poetry[`${selection}0`], poetry[`${selection}1`], poetry[`${selection}2`]]
+    let options = getOptions()
+
     function selectOption(opt, ind) {
         poem = [...poem, opt]
         selection += `${ind}`

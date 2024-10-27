@@ -214,6 +214,7 @@
                 >
                     <div class="text-lg font-bold">{prop.Name}</div>
                     <div>{prop.Story}</div>
+                    <div>Click for more!</div>
                 </Popup>
             </Marker>
         {/each}
